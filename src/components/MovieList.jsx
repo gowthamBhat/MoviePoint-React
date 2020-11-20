@@ -1,20 +1,29 @@
 import React, { Component } from 'react'
-import { getMovies } from '../Services/fakeMovieService'
-import '../Services/css/MovieList.css'
+import { getMovies } from '../Services/fakeMovieService'  //importing all the movies from the fake movie list
+import Like from "../common/Like";
 
 class MovieList extends Component {
     constructor(props) {
         super(props)
 
-        let movie = getMovies();
-        movie = [...movie];
+        // let movie = getMovies();
+
         this.state = {
-            movie: movie
+            movie: getMovies()
         }
     }
     deleteHandler = (movies) => {
-        const movie = this.state.movie.filter((x) => x._id !== movies._id)
+        const movie = this.state.movie.filter((x) => x._id !== movies._id) //filtering the movie except the one that clicked delete button
         this.setState({ movie: movie });
+    }
+    toggleLiked = (likedMovie) => {
+        let movie = this.state.movie.map((stateMovie) => {
+            if (stateMovie === likedMovie)
+                stateMovie.liked = !stateMovie.liked
+
+            return stateMovie
+        })
+        this.setState({ movie })
     }
 
     render() {
@@ -33,6 +42,7 @@ class MovieList extends Component {
                             <th scope="col">Stock</th>
                             <th scope="col">Rate</th>
                             <th scope="col"></th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,6 +52,8 @@ class MovieList extends Component {
                                 <td>{movie.genre.name}</td>
                                 <td>{movie.numberInStock}</td>
                                 <td>{movie.dailyRentalRate}</td>
+                                <td><Like toggleLiked={() => this.toggleLiked(movie)} liked={movie} /></td>
+
                                 <td><button onClick={() => this.deleteHandler(movie)} className="btn btn-danger btn-sm">Delete</button> </td>
                             </tr>
                         })}
@@ -51,6 +63,7 @@ class MovieList extends Component {
                 </table>
             </React.Fragment>
         )
-    }
+    }//  this.toggleLiked(movie) alli movie reference na pass madbodu
+    /*showing the movie with map method, movie state should be a array to map over it */
 }
 export default MovieList
