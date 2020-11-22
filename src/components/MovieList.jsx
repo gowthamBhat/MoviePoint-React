@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
 import { getMovies } from '../Services/fakeMovieService'  //importing all the movies from the fake movie list
 import Like from "../common/Like";
+import Paggination from "../common/Paggination"
+import { paginate } from '../utitls/paginate';
+import LisGroup from './ListGroup';
+
 
 class MovieList extends Component {
     constructor(props) {
@@ -9,7 +13,9 @@ class MovieList extends Component {
         // let movie = getMovies();
 
         this.state = {
-            movie: getMovies()
+            movie: getMovies(),
+            currentPage: 1,
+            pageSize: 5
         }
     }
     deleteHandler = (movies) => {
@@ -17,20 +23,33 @@ class MovieList extends Component {
         this.setState({ movie: movie });
     }
     toggleLiked = (likedMovie) => {
-        let movie = this.state.movie.map((stateMovie) => {
-            if (stateMovie === likedMovie)
-                stateMovie.liked = !stateMovie.liked
 
-            return stateMovie
-        })
-        this.setState({ movie })
+        //! this method is also valid but have to gone through a loop
+        // let movie = this.state.movie.map((stateMovie) => {
+        //     if (stateMovie === likedMovie)
+        //         stateMovie.liked = !stateMovie.liked
+
+        //     return stateMovie
+        // })
+        // this.setState({ movie })
+
+        //! this is best for performance
+        const movies = [...this.state.movie];
+        const index = movies.indexOf(likedMovie);
+        movies[index] = { ...movies[index] };
+        movies[index].liked = !movies[index].liked;
+        this.setState({ movie: movies });
+
+    }
+    pageNumberClickHandler = page => {
+        this.setState({ currentPage: page })
     }
 
     render() {
-        const { movie } = this.state;
+        const { movie, currentPage, pageSize } = this.state;
         if (movie.length === 0)
             return (<h5>there are no movies in the list</h5>)
-
+        const movies = paginate(movie, currentPage, pageSize);
         return (
             <React.Fragment>
                 <h5>There are {movie.length} in the database</h5>
@@ -46,7 +65,7 @@ class MovieList extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {movie.map((movie) => {
+                        {movies.map((movie) => {
                             return <tr key={movie._id}>
                                 <th scope="row">{movie.title}</th>
                                 <td>{movie.genre.name}</td>
@@ -61,6 +80,13 @@ class MovieList extends Component {
 
                     </tbody>
                 </table>
+                <LisGroup />
+
+                <Paggination
+                    onClickPageNumber={this.pageNumberClickHandler}
+                    itemCount={movie.length}
+                    currentPage={currentPage}
+                    pageSize={pageSize} />
             </React.Fragment>
         )
     }//  this.toggleLiked(movie) alli movie reference na pass madbodu

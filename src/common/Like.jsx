@@ -10,7 +10,7 @@ class Like extends Component {
 
         return (
             <div>
-                <i className={heart} aria-hidden="true" onClick={toggleLiked}></i>
+                <i className={heart} style={{ cursor: "pointer" }} aria-hidden="true" onClick={toggleLiked}></i>
             </div>
         )
     }
