@@ -1,7 +1,7 @@
 import React from 'react'
 
 function ListGroup(props) {
-    const { genres } = props;
+    const { genres, idProperty, nameProperty, selectedGenre, onGenreClick } = props;
     return (
         <div>
             {/* <div className="ListGroup list-group ">
@@ -10,16 +10,21 @@ function ListGroup(props) {
                     <button type="button" className="list-group-item list-group-item-action">{genre.name} </button>
                 )}
             </div> */}
-            <ul className="list-group" style={{ cursor: "pointer" }}>
-                <li className="list-group-item active">All Genres</li>
+            <ul className="list-group">
+                {/* <li className="list-group-item active" style={{ cursor: "pointer" }}>All Genres</li> */}
                 {genres.map(x => (
-                    <li key={x._id} className="list-group-item" style={{ cursor: "pointer" }}>
-                        {x.name}
+                    <li key={x[idProperty]} className={x === selectedGenre ? "list-group-item active" : "list-group-item"} onClick={() => onGenreClick(x)} style={{ cursor: "pointer" }}>
+                        {x[nameProperty]}
                     </li>
                 ))}
             </ul>
         </div>
     )
+
 }
+ListGroup.defaultProps = {
+    idProperty: "_id",
+    nameProperty: "name"
+} //making the component independent so it can be reusable
 
 export default ListGroup

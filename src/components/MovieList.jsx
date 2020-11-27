@@ -3,27 +3,29 @@ import { getMovies } from '../Services/fakeMovieService'  //importing all the mo
 import Like from "../common/Like";
 import Paggination from "../common/Paggination"
 import { paginate } from '../utitls/paginate';
-import LisGroup from '../common/ListGroup';
 import { getGenres } from '../Services/fakeGenreService';
+import ListGroup from './../common/ListGroup';
 
 
 class MovieList extends Component {
     constructor(props) {
         super(props)
 
-        // let movie = getMovies();
+        var genre = [{ _id: "77algen", name: "All genres" }, ...getGenres()];
+        // console.log(genres);
+
 
         this.state = {
             movie: getMovies(),
-            genres: getGenres(),
+            genres: genre,
             currentPage: 1,
-            pageSize: 5
+            pageSize: 5,
+            selectedGenre: ""
         }
     }
     deleteHandler = (movies) => {
         const movie = this.state.movie.filter((x) => x._id !== movies._id) //filtering the movie except the one that clicked delete button
         this.setState({ movie: movie });
-        console.log('');
 
     }
     toggleLiked = (likedMovie) => {
@@ -48,25 +50,35 @@ class MovieList extends Component {
     pageNumberClickHandler = page => {
         this.setState({ currentPage: page })
     }
-    onListClick = (param) => {
-        console.log(param);
+    onGenreClick = (genre) => {
+        this.setState({ selectedGenre: genre, currentPage: 1 })
     }
 
     render() {
-        const { movie, currentPage, pageSize } = this.state;
+        const { movie, currentPage, pageSize, selectedGenre } = this.state;
         if (movie.length === 0)
             return (<h5>there are no movies in the list</h5>)
-        const movies = paginate(movie, currentPage, pageSize);
 
 
+        const allGenreFilter = movie.filter((x) => {
+            if (selectedGenre.name === "All genres")
+                return x;
+            return x.genre._id === selectedGenre._id;
+        }) //function return the list of movies accroding to the user onClick event on the Genre List
+
+        const filter = selectedGenre ? allGenreFilter : movie;
+        const movies = paginate(filter, currentPage, pageSize);
         return (
             <div>
                 <div className="row">
                     <div className="col-2" style={{ marginTop: "90px" }}>
-                        <LisGroup genres={this.state.genres} onListClick={this.onListClick} />
+                        <ListGroup
+                            genres={this.state.genres}
+                            onGenreClick={this.onGenreClick}
+                            selectedGenre={this.state.selectedGenre} />
                     </div>
                     <div className="col">
-                        <h5>There are {movie.length} in the database</h5>
+                        <h5>There are {filter.length} in the database</h5>
                         <table className="table">
                             <thead className="thead-dark">
                                 <tr>
@@ -100,11 +112,12 @@ class MovieList extends Component {
 
                 <Paggination
                     onClickPageNumber={this.pageNumberClickHandler}
-                    itemCount={movie.length}
+                    itemCount={filter.length}
                     currentPage={currentPage}
                     pageSize={pageSize} />
             </div>
         )
+
     }//  this.toggleLiked(movie) alli movie reference na pass madbodu
     /*showing the movie with map method, movie state should be a array to map over it */
 }
