@@ -1,5 +1,5 @@
 import React from 'react'
-import Like from "../common/Like";
+import Like from "./common/Like";
 
 function MovieListTable(props) {
     const { movies, toggleLiked, deleteHandler } = props;

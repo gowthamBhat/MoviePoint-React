@@ -1,17 +1,19 @@
 import React, { Component } from 'react'
 import { getMovies } from '../Services/fakeMovieService'  //importing all the movies from the fake movie list
 
-import Paggination from "../common/Paggination"
-import { paginate } from '../utitls/paginate';
+import Paggination from "./common/Paggination"
+import { paginate } from './utitls/paginate';
 import { getGenres } from '../Services/fakeGenreService';
-import ListGroup from './../common/ListGroup';
+import ListGroup from './common/ListGroup';
 import MovieListTable from './MovieListTable';
+// import NavBar from './common/NavBar';
+
 
 class MovieList extends Component {
     constructor(props) {
         super(props)
 
-        var genre = [{ _id: "77algen", name: "All genres" }, ...getGenres()];
+        var genre = [{ _id: "", name: "All genres" }, ...getGenres()];
 
         this.state = {
             movie: getMovies(),
@@ -58,39 +60,42 @@ class MovieList extends Component {
             return (<h5>there are no movies in the list</h5>)
 
 
-        const allGenreFilter = movie.filter((x) => {
-            if (selectedGenre.name === "All genres")
-                return x;
-            return x.genre._id === selectedGenre._id;
-        }) //function return the list of movies accroding to the user onClick event on the Genre List
+        //const allGenreFilter = movie.filter(x => x.genre._id === selectedGenre._id) function return the list of movies accroding to the user onClick event on the Genre List
 
-        const filter = selectedGenre ? allGenreFilter : movie;
+        const filter = selectedGenre && selectedGenre._id ? movie.filter(x => x.genre._id === selectedGenre._id) : movie;
         const movies = paginate(filter, currentPage, pageSize);
 
         return (
             <div>
+
                 <div className="row">
                     <div className="col-2" style={{ marginTop: "90px" }}>
                         <ListGroup
                             genres={this.state.genres}
                             onGenreClick={this.onGenreClick}
-                            selectedGenre={this.state.selectedGenre} />
+                            selectedGenre={this.state.selectedGenre}
+                        />
+
+
                     </div>
                     <div className="col">
                         <h5>There are {filter.length} in the database</h5>
                         <MovieListTable
                             movies={movies}
                             toggleLiked={this.toggleLiked}
-                            deleteHandler={this.deleteHandler} />
+                            deleteHandler={this.deleteHandler}
+                        />
                     </div>
+                </div>
+                <div className="row-2">
+                    <Paggination
+                        onClickPageNumber={this.pageNumberClickHandler}
+                        itemCount={filter.length}
+                        currentPage={currentPage}
+                        pageSize={pageSize} />
                 </div>
 
 
-                <Paggination
-                    onClickPageNumber={this.pageNumberClickHandler}
-                    itemCount={filter.length}
-                    currentPage={currentPage}
-                    pageSize={pageSize} />
             </div>
         )
 
