@@ -1,5 +1,6 @@
 import React from 'react'
 import Like from "./common/Like";
+import { Link } from 'react-router-dom'
 
 function MovieListTable(props) {
     const { movies, toggleLiked, deleteHandler } = props;
@@ -19,8 +20,8 @@ function MovieListTable(props) {
                 <tbody>
                     {movies.map((movie) => {
                         return <tr key={movie._id}>
-                            <th scope="row">{movie.title}</th>
-                            <td>{movie.genre.name}</td>
+                            <th scope="row"><Link to={`/movies/${movie._id}`}>{movie.title} </Link></th>
+                            <td>  {movie.genre.name}  </td>
                             <td>{movie.numberInStock}</td>
                             <td>{movie.dailyRentalRate}</td>
                             <td><Like toggleLiked={() => toggleLiked(movie)} liked={movie} /></td>
