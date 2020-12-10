@@ -6,7 +6,9 @@ import { paginate } from './utitls/paginate';
 import { getGenres } from '../Services/fakeGenreService';
 import ListGroup from './common/ListGroup';
 import MovieListTable from './MovieListTable';
-// import NavBar from './common/NavBar';
+
+import SearchBox from './SearchBox';
+
 
 
 class MovieList extends Component {
@@ -20,7 +22,8 @@ class MovieList extends Component {
             genres: genre,
             currentPage: 1,
             pageSize: 5,
-            selectedGenre: ""
+            selectedGenre: null,
+            searchQuery: ""
         }
     }
     deleteHandler = (movies) => {
@@ -51,22 +54,41 @@ class MovieList extends Component {
         this.setState({ currentPage: page })
     }
     onGenreClick = (genre) => {
-        this.setState({ selectedGenre: genre, currentPage: 1 })
+        this.setState({ selectedGenre: genre, currentPage: 1, searchQuery: "" })
+    }
+    onSearch = (e) => {
+        const { movie } = this.state
+        let filteredNames = movie.filter((x) => {
+            const list = x.title.toLowerCase();
+            let typedWord = e.currentTarget.value
+            typedWord = typedWord.toLowerCase();
+            return list.match(typedWord);
+        });
+        //  filteredNames;
+        this.setState({ searchQuery: filteredNames, currentPage: 1, selectedGenre: null });
+
     }
 
     render() {
-        const { movie, currentPage, pageSize, selectedGenre } = this.state;
+        const { movie, currentPage, pageSize, selectedGenre, searchQuery } = this.state;
         if (movie.length === 0)
             return (<h5>there are no movies in the list</h5>)
 
 
         //const allGenreFilter = movie.filter(x => x.genre._id === selectedGenre._id) function return the list of movies accroding to the user onClick event on the Genre List
 
-        const filter = selectedGenre && selectedGenre._id ? movie.filter(x => x.genre._id === selectedGenre._id) : movie;
+        let filter = movie;
+        if (searchQuery)
+            filter = searchQuery;
+
+        else if (selectedGenre && selectedGenre._id)
+            filter = movie.filter(x => x.genre._id === selectedGenre._id)
+
         const movies = paginate(filter, currentPage, pageSize);
 
         return (
             <div>
+                <SearchBox onSearch={this.onSearch} />
 
                 <div className="row">
                     <div className="col-2" style={{ marginTop: "90px" }}>
@@ -91,6 +113,7 @@ class MovieList extends Component {
                     <Paggination
                         onClickPageNumber={this.pageNumberClickHandler}
                         itemCount={filter.length}
+                        // itemCount={searchBox.length}
                         currentPage={currentPage}
                         pageSize={pageSize} />
                 </div>

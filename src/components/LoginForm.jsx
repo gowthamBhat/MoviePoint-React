@@ -1,5 +1,4 @@
-//! code is incomplete
-//! ******************
+
 import React, { Component } from 'react'
 import Joi from 'joi-browser';
 
@@ -72,11 +71,11 @@ class LoginForm extends Component {
                         <input type="password" name="password" onChange={this.handleInput} value={account.password} className="form-control" style={{ "width": "250px" }} id="password" placeholder="Enter Password" />
                         {error.password && <div className="alert alert-danger" role="alert" style={{ "width": "250px" }}>{error.password}</div>}
                     </div>
-                    <button type="submit" className="btn btn-primary">Submit</button>
+                    <button type="submit" className="btn btn-primary" >Submit</button>
                 </form>
             </React.Fragment>
         )
     }
 }
-
+//disabled={this.validate()} in submit button attribute
 export default LoginForm

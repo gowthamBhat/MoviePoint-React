@@ -17,7 +17,11 @@ function NavBar() {
                         <li className="nav-item">
                             <NavLink to="/login" className="nav-link" >Login</NavLink>
                         </li>
+                        <li className="nav-item">
+                            <NavLink to="/signup" className="nav-link" >SignUp</NavLink>
+                        </li>
                     </ul>
+
                 </div>
             </nav>
         </React.Fragment>
