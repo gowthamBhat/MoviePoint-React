@@ -1,13 +1,15 @@
 import React, { Component } from 'react'
-import { getMovies } from '../Services/fakeMovieService'  //importing all the movies from the fake movie list
+import { getMovies, deleteMovie } from '../Services/movieService';
+import { toast } from 'react-toastify';
 
 import Paggination from "./common/Paggination"
 import { paginate } from './utitls/paginate';
-import { getGenres } from '../Services/fakeGenreService';
+import { getGenres } from '../Services/genreService';
 import ListGroup from './common/ListGroup';
 import MovieListTable from './MovieListTable';
-
 import SearchBox from './SearchBox';
+
+
 
 
 
@@ -15,20 +17,36 @@ class MovieList extends Component {
     constructor(props) {
         super(props)
 
-        var genre = [{ _id: "", name: "All genres" }, ...getGenres()];
-
         this.state = {
-            movie: getMovies(),
-            genres: genre,
+            movie: [],
+            genres: [],
             currentPage: 1,
             pageSize: 5,
             selectedGenre: null,
             searchQuery: ""
         }
     }
-    deleteHandler = (movies) => {
+    async componentDidMount() {
+        const { data } = await getGenres();
+        var genres = [{ _id: "", name: "All genres" }, ...data];
+        let movie = await getMovies();
+        movie = movie.data
+
+        this.setState({ genres, movie })
+    }
+    deleteHandler = async (movies) => {
+        const previousMovieState = this.state.movie;
         const movie = this.state.movie.filter((x) => x._id !== movies._id) //filtering the movie except the one that clicked delete button
         this.setState({ movie: movie });
+        try {
+            await deleteMovie(movies._id);
+        } catch (e) {
+
+            toast.error('Something went wrong while Deleting Movie');
+            this.setState({ movie: previousMovieState });
+        }
+
+
 
     }
     toggleLiked = (likedMovie) => {
@@ -69,7 +87,10 @@ class MovieList extends Component {
 
     }
 
+
+
     render() {
+
         const { movie, currentPage, pageSize, selectedGenre, searchQuery } = this.state;
         if (movie.length === 0)
             return (<h5>there are no movies in the list</h5>)
@@ -86,6 +107,8 @@ class MovieList extends Component {
 
         const movies = paginate(filter, currentPage, pageSize);
 
+
+
         return (
             <div>
                 <SearchBox onSearch={this.onSearch} />
@@ -100,6 +123,7 @@ class MovieList extends Component {
 
 
                     </div>
+
                     <div className="col">
                         <h5>There are {filter.length} in the database</h5>
                         <MovieListTable
