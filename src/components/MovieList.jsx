@@ -8,9 +8,7 @@ import { getGenres } from '../Services/genreService';
 import ListGroup from './common/ListGroup';
 import MovieListTable from './MovieListTable';
 import SearchBox from './SearchBox';
-
-
-
+import { Link } from 'react-router-dom';
 
 
 class MovieList extends Component {
@@ -126,6 +124,13 @@ class MovieList extends Component {
 
                     <div className="col">
                         <h5>There are {filter.length} in the database</h5>
+                        <Link
+                            to={"/movies/new"}
+                            className="btn btn-primary"
+                            style={{ marginBottom: 20 }}
+                        >
+                            New Movie
+              </Link>
                         <MovieListTable
                             movies={movies}
                             toggleLiked={this.toggleLiked}
