@@ -5,8 +5,6 @@ export function getMovies() {
 }
 export async function getMovie(id) {
     const { data } = await http.get(`${endPoint}/${id}`);
-    console.log(data);
-
     return data;
     //data.find(m => m._id === id);
 }

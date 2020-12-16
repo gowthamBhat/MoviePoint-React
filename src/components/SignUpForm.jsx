@@ -1,18 +1,17 @@
 import React, { Component } from 'react';
 import Joi from 'joi-browser';
-
-
+import { register } from './../Services/userService';
 
 class SignUpForm extends Component {
 
     state = {
-        account: { email: "", password: "", username: "" },
+        account: { email: "", password: "", name: "" },
         errors: {}
     };
 
     schema = {
         email: Joi.string().required().label('Email'),
-        username: Joi.string().required().label('Username'),
+        name: Joi.string().required().label('Username'),
         password: Joi.string().required().label('Password')
     }
 
@@ -31,18 +30,27 @@ class SignUpForm extends Component {
     handleInput = e => {
 
         const account = { ...this.state.account }
-        account[e.currentTarget.name] = e.currentTarget.value; //state will be set for both username and password whenever user types
+        account[e.currentTarget.name] = e.currentTarget.value; //state will be set for both name and password whenever user types
         this.setState({ account })
 
     }
-    handleSUbmit = (e) => {
+    handleSUbmit = async (e) => {
         e.preventDefault();
         const result = this.validate();
         this.setState({ errors: result || {} });
         if (result)
             return;
+        try {
 
-        console.log('Signup submitted');
+            await register(this.state.account);
+        } catch (e) {
+
+            if (e.response && e.response.status === 400) {
+                const errors = { ...this.state.errors }
+                errors.email = "Account Already Exists";
+                this.setState({ errors })
+            }
+        }
 
     }
 
@@ -52,7 +60,7 @@ class SignUpForm extends Component {
             <div>
                 <form onSubmit={this.handleSUbmit} autoComplete="off">
                     <div className="mb-3">
-                        <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
+                        <label htmlFor="exampleInputEmail1" className="form-label">Email</label>
                         <input type="email" name="email" onChange={this.handleInput} value={account.email} className="form-control" id="exampleInputEmail1" style={{ "width": "250px" }} aria-describedby="emailHelp" />
                         {this.state.errors.email && <div className="alert alert-danger" role="alert" style={{ "width": "250px" }}>{errors.email}</div>}
                     </div>
@@ -62,9 +70,9 @@ class SignUpForm extends Component {
                         {this.state.errors.password && <div className="alert alert-danger" role="alert" style={{ "width": "250px" }}>{errors.password}</div>}
                     </div>
                     <div className="mb-3">
-                        <label htmlFor="exampleInputName" className="form-label">Name</label>
-                        <input type="text" name="username" onChange={this.handleInput} value={account.username} className="form-control" id="exampleInputName" style={{ "width": "250px" }} aria-describedby="emailHelp" />
-                        {this.state.errors.username && <div className="alert alert-danger" role="alert" style={{ "width": "250px" }}>{errors.username}</div>}
+                        <label htmlFor="exampleInputName" className="form-label">Username</label>
+                        <input type="text" name="name" onChange={this.handleInput} value={account.name} className="form-control" id="exampleInputName" style={{ "width": "250px" }} aria-describedby="emailHelp" />
+                        {this.state.errors.name && <div className="alert alert-danger" role="alert" style={{ "width": "250px" }}>{errors.name}</div>}
                     </div>
                     <button type="submit" className="btn btn-primary">Submit</button>
                 </form>

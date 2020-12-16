@@ -1,16 +1,16 @@
 
 import React, { Component } from 'react'
 import Joi from 'joi-browser';
-
+import { logging } from './../Services/authService';
 
 class LoginForm extends Component {
 
     state = {
-        account: { username: "", password: "" },
+        account: { email: "", password: "" },
         error: {}
     }
     schema = {
-        username: Joi.string().required().label('Username'),
+        email: Joi.string().required().label('Email'),
 
         password: Joi.string().required().label('Password')
     };
@@ -30,29 +30,34 @@ class LoginForm extends Component {
 
         // const { account } = this.state;
         // const error = {};
-        // if (account.username.trim() === '')
-        //     error.username = "User name required";
+        // if (account.email.trim() === '')
+        //     error.email = "User name required";
         // if (account.password.trim() === '')
         //     error.password = "Password required";
         // return Object.keys(error).length === 0 ? null : error;
         //Object.keys returns the array of all the keys in the object
     }
-    handleSubmit = e => {
+    handleSubmit = async (e) => {
         e.preventDefault();
-
+        const { email, password } = this.state.account
         const error = this.validate();
 
 
         this.setState({ error: error || {} });
         if (error)
             return;
+        try {
+            await logging(email, password);
 
-        console.log('submitted');
+        } catch (error) {
+            console.log(error);
+        }
+
     }
     handleInput = e => {
 
         const account = { ...this.state.account }
-        account[e.currentTarget.name] = e.currentTarget.value; //state will be set for both username and password whenever user types
+        account[e.currentTarget.name] = e.currentTarget.value; //state will be set for both email and password whenever user types
         this.setState({ account })
 
     }
@@ -62,9 +67,9 @@ class LoginForm extends Component {
             <React.Fragment>
                 <form onSubmit={this.handleSubmit} autoComplete="off">
                     <div className="form-group">
-                        <label htmlFor="username">Username</label>
-                        <input type="text" name="username" onChange={this.handleInput} value={account.username} className="form-control" style={{ "width": "250px" }} id="username" aria-describedby="emailHelp" placeholder="Enter Username" />
-                        {error.username && <div className="alert alert-danger" role="alert" style={{ "width": "250px" }}>{error.username}</div>}
+                        <label htmlFor="email">Email</label>
+                        <input type="email" name="email" onChange={this.handleInput} value={account.email} className="form-control" style={{ "width": "250px" }} id="email" aria-describedby="emailHelp" placeholder="Enter email" />
+                        {error.email && <div className="alert alert-danger" role="alert" style={{ "width": "250px" }}>{error.email}</div>}
                     </div>
                     <div className="form-group ">
                         <label htmlFor="password">Password</label>
