@@ -50,7 +50,11 @@ class LoginForm extends Component {
             await logging(email, password);
 
         } catch (error) {
-            console.log(error);
+            if (error.response && error.response.status === 400) {
+                const error = { ...this.state.error };
+                error.email = "Email or Password is Wrong";
+                this.setState({ error });
+            }
         }
 
     }
