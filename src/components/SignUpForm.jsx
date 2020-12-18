@@ -42,7 +42,11 @@ class SignUpForm extends Component {
             return;
         try {
 
-            await register(this.state.account);
+            const response = await register(this.state.account);
+            localStorage.setItem('token', response.headers['x-auth-token']);
+            // this.props.history.push('/movies');
+            window.location = '/'; //this will make the whole window relod when the pages moves
+
         } catch (e) {
 
             if (e.response && e.response.status === 400) {
@@ -74,7 +78,7 @@ class SignUpForm extends Component {
                         <input type="text" name="name" onChange={this.handleInput} value={account.name} className="form-control" id="exampleInputName" style={{ "width": "250px" }} aria-describedby="emailHelp" placeholder="Enter Username" />
                         {this.state.errors.name && <div className="alert alert-danger" role="alert" style={{ "width": "250px" }}>{errors.name}</div>}
                     </div>
-                    <button type="submit" className="btn btn-primary">Submit</button>
+                    <button type="submit" className="btn btn-dark" disabled={this.validate()}>Submit</button>
                 </form>
             </div>
         )

@@ -11,7 +11,6 @@ class LoginForm extends Component {
     }
     schema = {
         email: Joi.string().required().label('Email'),
-
         password: Joi.string().required().label('Password')
     };
 
@@ -46,9 +45,12 @@ class LoginForm extends Component {
         this.setState({ error: error || {} });
         if (error)
             return;
-        try {
-            await logging(email, password);
 
+        try {
+            const { data: jwt } = await logging(email, password);
+            localStorage.setItem('token', jwt);
+            // this.props.history.push('/movies');
+            window.location = '/'; //this will make the whole window relod when the pages moves
         } catch (error) {
             if (error.response && error.response.status === 400) {
                 const error = { ...this.state.error };
@@ -56,7 +58,6 @@ class LoginForm extends Component {
                 this.setState({ error });
             }
         }
-
     }
     handleInput = e => {
 
@@ -80,7 +81,7 @@ class LoginForm extends Component {
                         <input type="password" name="password" onChange={this.handleInput} value={account.password} className="form-control" style={{ "width": "250px" }} id="password" placeholder="Enter Password" />
                         {error.password && <div className="alert alert-danger" role="alert" style={{ "width": "250px" }}>{error.password}</div>}
                     </div>
-                    <button type="submit" className="btn btn-primary" >Submit</button>
+                    <button type="submit" className="btn btn-dark" disabled={this.validate()} >Submit</button>
                 </form>
             </React.Fragment>
         )
