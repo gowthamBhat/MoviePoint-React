@@ -2,6 +2,7 @@
 import React, { Component } from 'react'
 import Joi from 'joi-browser';
 import { logging } from './../Services/authService';
+import LocalStroageContainer from './../Services/LocalStroageContainer';
 
 class LoginForm extends Component {
 
@@ -48,7 +49,8 @@ class LoginForm extends Component {
 
         try {
             const { data: jwt } = await logging(email, password);
-            localStorage.setItem('token', jwt);
+            LocalStroageContainer.saveToken(jwt); //implementations are in LocalStroage Module
+
             // this.props.history.push('/movies');
             window.location = '/'; //this will make the whole window relod when the pages moves
         } catch (error) {

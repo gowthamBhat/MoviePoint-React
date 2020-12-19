@@ -9,16 +9,18 @@ import LoginForm from './components/LoginForm';
 import SignUpForm from './components/SignUpForm';
 import { ToastContainer } from 'react-toastify';
 import './App.css';
-import jwt from 'jwt-decode'
+
 import React, { Component } from 'react'
+import LogOut from './components/common/LogOut';
+import LocalStroageContainer from './Services/LocalStroageContainer';
+
+
 
 class App extends Component {
   state = {};
   componentDidMount() {
     try {
-      const embeddedToken = localStorage.getItem('token');
-      const user = jwt(embeddedToken);
-
+      const user = LocalStroageContainer.getCurrentUser();
       this.setState({ user })
     } catch (error) { }
 
@@ -36,6 +38,7 @@ class App extends Component {
           <Route path="/customers" component={Customers} />
           <Route path="/notfound" component={NotFound} />
           <Route path="/login" component={LoginForm} />
+          <Route path="/logout" component={LogOut} />
           <Route path="/signup" component={SignUpForm} />
 
           <Redirect from="/" exact to="/movies" />

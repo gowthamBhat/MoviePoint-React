@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Joi from 'joi-browser';
 import { register } from './../Services/userService';
+import LocalStroageContainer from './../Services/LocalStroageContainer';
 
 class SignUpForm extends Component {
 
@@ -43,7 +44,7 @@ class SignUpForm extends Component {
         try {
 
             const response = await register(this.state.account);
-            localStorage.setItem('token', response.headers['x-auth-token']);
+            LocalStroageContainer.saveToken(response.headers['x-auth-token']); //implementations are in LocalStroage Module
             // this.props.history.push('/movies');
             window.location = '/'; //this will make the whole window relod when the pages moves
 
