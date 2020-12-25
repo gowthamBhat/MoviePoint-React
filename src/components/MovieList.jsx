@@ -64,7 +64,8 @@ class MovieList extends Component {
         movies[index] = { ...movies[index] };
         movies[index].liked = !movies[index].liked;
         this.setState({ movie: movies });
-
+        //There is no Like route for making this happen in backend
+        //it's a future feature to develop
     }
     pageNumberClickHandler = page => {
         this.setState({ currentPage: page })
@@ -88,10 +89,19 @@ class MovieList extends Component {
 
 
     render() {
-
+        const { user } = this.props;
         const { movie, currentPage, pageSize, selectedGenre, searchQuery } = this.state;
         if (movie.length === 0)
-            return (<h5>there are no movies in the list</h5>)
+            return (<React.Fragment>
+                <h5 style={{ textAlign: 'center' }}>There Are No Movies In The List</h5>
+                <br />
+                <div className="d-flex justify-content-center">
+                    <div className="spinner-border" style={{ width: "3rem", height: "3rem" }} role="status">
+                        <span className="sr-only">Loading...</span>
+                    </div>
+                </div>
+
+            </React.Fragment>)
 
 
         //const allGenreFilter = movie.filter(x => x.genre._id === selectedGenre._id) function return the list of movies accroding to the user onClick event on the Genre List
@@ -123,18 +133,21 @@ class MovieList extends Component {
                     </div>
 
                     <div className="col">
-                        <h5>There are {filter.length} in the database</h5>
-                        <Link
+                        <h5> {filter.length} Movies in the database</h5>
+
+                        {user && <Link
                             to={"/movies/new"}
                             className="btn btn-primary"
                             style={{ marginBottom: 20 }}
                         >
                             New Movie
-              </Link>
+                       </Link>}
+
                         <MovieListTable
                             movies={movies}
                             toggleLiked={this.toggleLiked}
                             deleteHandler={this.deleteHandler}
+                            user={user}
                         />
                     </div>
                 </div>

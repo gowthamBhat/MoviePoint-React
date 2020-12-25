@@ -3,7 +3,7 @@ import Like from "./common/Like";
 import { Link } from 'react-router-dom'
 
 function MovieListTable(props) {
-    const { movies, toggleLiked, deleteHandler } = props;
+    const { movies, toggleLiked, deleteHandler, user } = props;
     return (
         <div>
             <table className="table">
@@ -26,7 +26,7 @@ function MovieListTable(props) {
                             <td>{movie.dailyRentalRate}</td>
                             <td><Like toggleLiked={() => toggleLiked(movie)} liked={movie} /></td>
 
-                            <td><button onClick={() => deleteHandler(movie)} className="btn btn-danger btn-sm">Delete</button> </td>
+                            {user && user.isAdmin && <td><button onClick={() => deleteHandler(movie)} className="btn btn-danger btn-sm">Delete</button> </td>}
                         </tr>
                     })}
 

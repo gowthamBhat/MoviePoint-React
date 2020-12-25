@@ -1,3 +1,4 @@
+import React, { Component } from 'react'
 import MovieList from './components/MovieList'
 import { Redirect, Route, Switch } from "react-router-dom"
 import Rentals from './components/Rentals';
@@ -10,9 +11,9 @@ import SignUpForm from './components/SignUpForm';
 import { ToastContainer } from 'react-toastify';
 import './App.css';
 
-import React, { Component } from 'react'
 import LogOut from './components/common/LogOut';
 import LocalStroageContainer from './Services/LocalStroageContainer';
+import ProtectedRoute from './components/common/protectedRoute';
 
 
 
@@ -26,14 +27,26 @@ class App extends Component {
 
   }
   render() {
+    // const { user } = this.state.user;
     return (
       <div className="container">
         <ToastContainer />
         <NavBar user={this.state.user} />
 
         <Switch>
-          <Route path="/movies/:id" component={MovieForm} />
-          <Route path="/movies" component={MovieList} />
+          {/* <Route path="/movies/:id" render={props => {
+            if (!this.state.user)
+              return <Redirect to="/login" />
+
+            return <MovieForm {...props} />
+          }} /> */}
+          <ProtectedRoute
+            path="/movies/:id"
+            component={MovieForm}
+          />
+          <Route path="/movies"
+            render={props => <MovieList {...props} user={this.state.user} />}
+          />
           <Route path="/rentals" component={Rentals} />
           <Route path="/customers" component={Customers} />
           <Route path="/notfound" component={NotFound} />

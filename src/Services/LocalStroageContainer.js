@@ -16,12 +16,16 @@ function getCurrentUser() {
 function saveToken(token) {
     localStorage.setItem(tokenKey, token);
 }
+function getJwt() {
+    return localStorage.getItem(tokenKey);
+}
 
 
 const LocalStroageContainer = {
     loggingOut,
     getCurrentUser,
-    saveToken
+    saveToken,
+    getJwt
 }
 
 export default LocalStroageContainer;
